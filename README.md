@@ -31,13 +31,14 @@ gcloud run deploy travel-europe-service
 --platform=managed
 ```
 
-Note that in our case the flag --port=80 was necessary to avoid the default
---allow-unauthenticated will make our website public.
+Note that in our case the flag ```--port=80``` was necessary to avoid the default
+``` --allow-unauthenticated will make our website public. ```
 
 We also can configure IAM policies to achieve this. But the former is the go-to standard
 
 Now that your app is fully operational you can get the url by doing
-gcloud run services describe travel-europe-service --region=us-central1
+
+```gcloud run services describe travel-europe-service --region=us-central1```
 
 if you don't remember a resource name you can get it with 
 
@@ -73,15 +74,93 @@ gcloud compute instance-groups managed create container-group \
    --region=us-central1
 ```
 
-## Network and Load Balancing Configuration
-To expose the service to the internet globally, we configured an HTTP(S) Load Balancer. This includes the necessary firewall rule to allow health check and user traffic.
+# Network and Load Balancing Configuration
+
+### Step 1
+Create the healthcheck
+
+```gcloud compute health-checks create http http-basic-check --port=80```
+
+This command creates a healthcheck named http-basic-check on port 80
+The load balancer needs a healthcheck, otherwise it has no way of knowing which VM is healthy. 
+
+### Step 2: Create a Backend Service
+
+> A backend service defines how Cloud Load Balancing distributes traffic. The backend service configuration contains a set of values, such as the protocol used to connect to backends, various distribution and session settings, health checks, and timeouts. 
+> — *Google Backend Services Overview*
+
+```bash
+gcloud compute backend-services create web-backend-service \
+    --protocol=HTTP \
+    --health-checks=http-basic-check \
+    --global
+```
+## Step 3 Adding the backend
+```
+gcloud compute backend-services add-backend web-backend-service \
+    --instance-group=container-group \
+    --instance-group-region=us-central1 \
+    --global
+```
+``` gcloud compute backend-services add-backend web-backend-service ```
+ This command modifies the existing web-backend-service.
+
+then we point it to the MIG name and region
+```
+--instance-group=container-group \
+    --instance-group-region=us-central1 \
+```
+
+The --global flag its because the backend is a global service
+
+## Step 4
+Create the URL Map
 
 ```
-gcloud compute firewall-rules create allow-http-80 \
+gcloud compute url-maps create web-map \
+  --default-service=web-backend-service
+```
+
+A URL map is a set of rules for routing incoming HTTP(S) requests to specific backend services or backend buckets. A minimal URL map matches all incoming request paths (/*). Like in our case 
+```--default-service=web-backend-service``` routes all incoming traffic that matches our URL to the single backend service we have.
+
+## Step 5
+
+Create the target http Proxy
+
+```
+gcloud compute target-http-proxies create http-lb-proxy \
+  --url-map=web-map
+  ```
+
+The target proxy is the component receiving requests from the user.
+the ```--url-map=web-map``` tells it to use the rules defined in the url map
+
+## Step 6 Forwarding rule
+
+```
+gcloud compute forwarding-rules create http-content-rule \
+  --global \
+  --target-http-proxy=http-lb-proxy \
+  --ports=80
+  ``` 
+
+This ties a public IP to our proxy 
+Flags
+  ```--global```  needed to use it on a global http load balancer
+  ```--target-http-proxy=http-lb-proxy```  points to our proxy
+  ```--ports=80 `specifies port```
+
+## Step 7 Firewall rules
+
+Now for "hiding the vms" we need an specific rule that allow traffic from google load balancers and health checkers only
+
+```
+gcloud compute firewall-rules create allow-lb-and-health-checks \
   --network=default \
-  --allow=tcp:80 \
+  --action=allow \
+  --direction=INGRESS \
+  --rules=tcp:80 \
+  --source-ranges=35.191.0.0/16,130.211.0.0/22 \
   --target-tags=network-lb-tag
-```
-
-
-
+  ```
