@@ -1,6 +1,6 @@
 # Travel Europe LLC - Web Infrastructure Deployment
 
-l<img width="769" height="411" alt="google_cloud_run" src="https://github.com/user-attachments/assets/bb30c358-277e-4a76-8211-b9097ce27e33" />
+<img width="769" height="411" alt="google_cloud_run" src="https://github.com/user-attachments/assets/bb30c358-277e-4a76-8211-b9097ce27e33" />
 
 For the cloud run app deployment we started by creaing our artifact registry standard repository using Google CloudUI and naming it "grupo2"
 to start pushing images into it we need to authenticate docker with our current gcloud credentials.
@@ -9,11 +9,15 @@ gcloud auth configure-docker us-central1-docker.pkg.dev
 
 then, we need to tag our image with googles address so it wont try to push it to docker hub:
 
+```
 docker tag g2webapp:v1 us-central1-docker.pkg.dev/juanalfredol-group1-dev/grupo2/landing-site:v1
+```
 
 then to push the image to registry:
 
+```
 docker push us-central1-docker.pkg.dev/juanalfredol-group1-dev/grupo2/landing-site:v1
+```
 
 Now, time to deploy to a Cloud run app
 we can use the following command
@@ -37,34 +41,32 @@ gcloud run services describe travel-europe-service --region=us-central1
 
 if you don't remember a resource name you can get it with 
 
+```
 gcloud run services list --region=us-central1
+```
 
-# Travel Europe LLC - Web Infrastructure Deployment
+gcloud compute instance-templates create-with-container vm-templates \
+  --machine-type=e2-small \
+  --tags=network-lb-tag \
+  --scopes=cloud-platform \
+  --container-image=us-central1-docker.pkg.dev/juanalfredol-group1-dev/grupo2/landing-site:latest
 
-Este proyecto despliega la infraestructura para el sitio web de [Travel Europe LLC](https://traveleurope.com) utilizando recursos nativos de Google Cloud, siguiendo un enfoque de "green field" y mejores prácticas de despliegue automatizado.
 
-## Arquitectura del Proyecto
-Hemos migrado de un despliegue manual a una arquitectura escalable y contenedorizada. Los componentes clave son:
+  #GCE (Compute Engine)
 
-* **Contenedorización:** Imagen del sitio web estático empaquetada con Docker y almacenada en **Artifact Registry**.
-* **Orquestación:** Despliegue gestionado mediante **Compute Engine** (con Plantillas de Instancia y Grupos de Instancias Gestionados - MIG).
-* **Balanceo de Carga:** Configuración de un **Load Balancer** global para proveer un único endpoint de acceso (IP externa) y alta disponibilidad.
-* **Infraestructura como Código:** Despliegue ejecutado a través de Google Cloud SDK (`gcloud`).
+<img width="769" height="411" alt="google_compute_engine" src="https://www.google.com/search?q=https://github.com/user-attachments/assets/tu-link-de-imagen-gce" />
 
-## Ciclo de vida (Sprints)
-- **Sprint 1:** Containerización local y subida de imagen a Artifact Registry.
-- **Sprint 2:** Despliegue de infraestructura en GCP y configuración de balanceador de carga.
-- **Sprint 3:** Documentación y entrega del repositorio siguiendo estándares de control de versiones.
+For the Compute Engine (GCE) deployment, we implemented a scalable architecture using Managed Instance Groups (MIG) to ensure high availability and automated container lifecycle management.
 
-## Guía de Despliegue
-Para replicar este entorno, se utilizaron los siguientes comandos principales:
+## A. Defining the Instance Template
+We created a base configuration that automates the downloading and execution of the container from Artifact Registry upon instance startup, ensuring deployment consistency
 
-1.  **Creación de plantilla:**
-    `gcloud compute instance-templates create-with-container ...`
-2.  **Gestión de grupo:**
-    `gcloud compute instance-groups managed create ...`
+```
+gcloud compute instance-templates create-with-container vm-templates \
+  --machine-type=e2-small \
+  --tags=network-lb-tag \
+  --scopes=cloud-platform \
+  --container-image=us-central1-docker.pkg.dev/juanalfredol-group1-dev/grupo2/landing-site:latest
+```
 
-## Recursos adicionales
-* **Repositorio original:** [PON AQUÍ EL LINK AL REPO ORIGINAL QUE TE DIERON]
-* **Integrantes:** [Tu nombre/Equipo]
-* **Proyecto:** TELSAL | Google Cloud Tech Pre-Training
+
