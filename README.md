@@ -51,7 +51,7 @@ gcloud run services list --region=us-central1
 
 For the Compute Engine (GCE) deployment, we implemented a scalable architecture using Managed Instance Groups (MIG) to ensure high availability and automated container lifecycle management.
 
-## A. Defining the Instance Template
+## Defining the Instance Template
 We created a base configuration that automates the downloading and execution of the container from Artifact Registry upon instance startup, ensuring deployment consistency
 
 ```
@@ -61,5 +61,27 @@ gcloud compute instance-templates create-with-container vm-templates \
   --scopes=cloud-platform \
   --container-image=us-central1-docker.pkg.dev/juanalfredol-group1-dev/grupo2/landing-site:latest
 ```
+
+## Managed Instance Group (MIG)
+To ensure scalability and high availability, we deployed a Managed Instance Group (MIG) using the previously configured template. This group ensures that, in the event of any failure, instances are automatically repaired while maintaining the desired number of replicas.
+
+```
+gcloud compute instance-groups managed create container-group \
+   --base-instance-name=container-vm \
+   --size=3 \
+   --template=vm-templates \
+   --region=us-central1
+```
+
+## Network and Load Balancing Configuration
+To expose the service to the internet globally, we configured an HTTP(S) Load Balancer. This includes the necessary firewall rule to allow health check and user traffic.
+
+```
+gcloud compute firewall-rules create allow-http-80 \
+  --network=default \
+  --allow=tcp:80 \
+  --target-tags=network-lb-tag
+```
+
 
 
