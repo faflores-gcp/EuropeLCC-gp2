@@ -1,4 +1,5 @@
-#EUROPE LCC AEROLINE
+# Travel Europe LLC - Web Infrastructure Deployment
+
 l<img width="769" height="411" alt="google_cloud_run" src="https://github.com/user-attachments/assets/bb30c358-277e-4a76-8211-b9097ce27e33" />
 
 For the cloud run app deployment we started by creaing our artifact registry standard repository using Google CloudUI and naming it "grupo2"
@@ -17,12 +18,14 @@ docker push us-central1-docker.pkg.dev/juanalfredol-group1-dev/grupo2/landing-si
 Now, time to deploy to a Cloud run app
 we can use the following command
 
+```
 gcloud run deploy travel-europe-service
 --image=us-central1-docker.pkg.dev/juanalfredol-group1-dev/grupo2/landing-site:v1 
 --region=us-central1
 --port=80
 --allow-unauthenticated
 --platform=managed
+```
 
 Note that in our case the flag --port=80 was necessary to avoid the default
 --allow-unauthenticated will make our website public.
