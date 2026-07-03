@@ -52,9 +52,9 @@ gcloud compute instance-templates create-with-container vm-templates \
   --container-image=us-central1-docker.pkg.dev/juanalfredol-group1-dev/grupo2/landing-site:latest
 
 
-  #GCE (Compute Engine)
+# GCE(Compute Engine)
 
-<img width="769" height="411" alt="google_compute_engine" src="https://www.google.com/search?q=https://github.com/user-attachments/assets/tu-link-de-imagen-gce" />
+<img width="769" height="411" alt="google_compute_engine" src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/google-compute-engine.png" />
 
 For the Compute Engine (GCE) deployment, we implemented a scalable architecture using Managed Instance Groups (MIG) to ensure high availability and automated container lifecycle management.
 
