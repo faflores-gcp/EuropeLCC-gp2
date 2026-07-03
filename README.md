@@ -1,4 +1,4 @@
-# Travel Europe LLC - Web Infrastructure Deployment
+<img width="100" height="100" alt="image" src="https://github.com/user-attachments/assets/4791e28d-22a9-44dc-8356-9b7fb27ae3bf" /># Travel Europe LLC - Web Infrastructure Deployment
 
 <img width="769" height="411" alt="google_cloud_run" src="https://github.com/user-attachments/assets/bb30c358-277e-4a76-8211-b9097ce27e33" />
 
@@ -45,16 +45,9 @@ if you don't remember a resource name you can get it with
 gcloud run services list --region=us-central1
 ```
 
-gcloud compute instance-templates create-with-container vm-templates \
-  --machine-type=e2-small \
-  --tags=network-lb-tag \
-  --scopes=cloud-platform \
-  --container-image=us-central1-docker.pkg.dev/juanalfredol-group1-dev/grupo2/landing-site:latest
-
-
 # GCE(Compute Engine)
 
-<img width="769" height="411" alt="google_compute_engine" src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/google-compute-engine.png" />
+<img width="100" height="100" alt="image" src="https://github.com/user-attachments/assets/c433473d-fbd0-4560-a8cd-e42e9296f6d5" />
 
 For the Compute Engine (GCE) deployment, we implemented a scalable architecture using Managed Instance Groups (MIG) to ensure high availability and automated container lifecycle management.
 
