@@ -164,3 +164,77 @@ gcloud compute firewall-rules create allow-lb-and-health-checks \
   --source-ranges=35.191.0.0/16,130.211.0.0/22 \
   --target-tags=network-lb-tag
   ```
+
+
+## GKE DEPLOYING GUIDE
+
+<img src="https://www.gstatic.com/bricks/image/5a58038a-c761-4454-a4c5-622510e24cfe.png" alt="Google Kubernetes Engine (GKE) | Google Cloud"/>
+
+
+
+*In this section you will find the path followed in this project to deploy our application using Google Kubernetes Engine.
+Before we start with the deployment there are some things that must be set up first as the artifact repository. Using the following command 
+
+```
+gcloud artifacts repositories create grupo2 \
+    --project=juanalfredol-group1-dev \
+    --repository-format=docker \
+    --location=LOCATION \
+    --description="DESCRIPTION" \
+    --mode=remote-repository \
+    --remote-repo-config-desc="REMOTE-REPOSITORY-DESCRIPTION" \
+    --disable-vulnerability-scanning \
+    --remote-docker-repo=UPSTREAM
+```
+
+*Once created push your docker image into the repository 
+
+```
+docker push LOCATION-docker.pkg.dev/PROJECT-ID/REPOSITORY/IMAGE:TAG
+
+```
+
+*Now that your image docker is on the repository we are ready to start the GKE  deployment process, the first step is to enable, and get the accurate IAM permissions on the project
+
+Running the following command the Google Cloud CLI sets up our project as default:
+
+```
+gcloud config set project juanalfredol-group1-dev
+
+```
+*Then grant the proper IAM permissions in order to manage GKE 
+
+```
+gcloud projects add-iam-policy-binding juanalfredol-group1-dev --member="user:USER_IDENTIFIER" --role=ROLE
+```
+
+*For beginners the best option is to use the GUI that Google Cloud offers to create, configure and manage a cluster.
+*The first step is to click on the three line menu on right upper part of the screen and look for the option Kubernetes Engine and select the option “Clusters”
+
+*The Cluster control pane will appear, in the upper part of the screen we select the option create
+
+*For this deployment we decided to go with the standard cluster option however it is important to point out that the best option is autopilot, this option 
+states that Google directly will manage your cluster automatically.
+
+*The Google Cloud GUI will guide trough to the steps, for this project we decided to set up the following settings.
+
+Name:travelapp
+Region: us-central1
+Network: default
+Node subnet: default
+Load Balancer, Ingress, and Gateway: Marked Enable Http load balancing
+
+*Then we clicked the option ‘create” and GKE created the whole environment for the cluster, including network settings, pods and node creation and ip ranges.
+
+*After the cluster was created we selected the option “Deploy”, and set up the following configuration: 
+
+Deployment name: travelapp
+Key 1: app, Value 1: deployment-1
+Cluster: travelapp (us-central1)
+Existing namespace : default
+Image path: us-central1-docker.pkg.dev/juanalfredol-group1-dev/grupo2/landing-site@sha256:4a53ac5528829fa274e677d7f4d7517aaf9dd331685ba24778de1ed70ebbe57b
+Expose deployment as new service : Marked
+
+*Finally we used the the load balancer external ip to test the deployment was successful.
+
+
