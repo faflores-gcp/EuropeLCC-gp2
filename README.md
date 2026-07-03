@@ -35,3 +35,33 @@ gcloud run services describe travel-europe-service --region=us-central1
 if you don't remember a resource name you can get it with 
 
 gcloud run services list --region=us-central1
+
+# Travel Europe LLC - Web Infrastructure Deployment
+
+Este proyecto despliega la infraestructura para el sitio web de [Travel Europe LLC](https://traveleurope.com) utilizando recursos nativos de Google Cloud, siguiendo un enfoque de "green field" y mejores prácticas de despliegue automatizado.
+
+## Arquitectura del Proyecto
+Hemos migrado de un despliegue manual a una arquitectura escalable y contenedorizada. Los componentes clave son:
+
+* **Contenedorización:** Imagen del sitio web estático empaquetada con Docker y almacenada en **Artifact Registry**.
+* **Orquestación:** Despliegue gestionado mediante **Compute Engine** (con Plantillas de Instancia y Grupos de Instancias Gestionados - MIG).
+* **Balanceo de Carga:** Configuración de un **Load Balancer** global para proveer un único endpoint de acceso (IP externa) y alta disponibilidad.
+* **Infraestructura como Código:** Despliegue ejecutado a través de Google Cloud SDK (`gcloud`).
+
+## Ciclo de vida (Sprints)
+- **Sprint 1:** Containerización local y subida de imagen a Artifact Registry.
+- **Sprint 2:** Despliegue de infraestructura en GCP y configuración de balanceador de carga.
+- **Sprint 3:** Documentación y entrega del repositorio siguiendo estándares de control de versiones.
+
+## Guía de Despliegue
+Para replicar este entorno, se utilizaron los siguientes comandos principales:
+
+1.  **Creación de plantilla:**
+    `gcloud compute instance-templates create-with-container ...`
+2.  **Gestión de grupo:**
+    `gcloud compute instance-groups managed create ...`
+
+## Recursos adicionales
+* **Repositorio original:** [PON AQUÍ EL LINK AL REPO ORIGINAL QUE TE DIERON]
+* **Integrantes:** [Tu nombre/Equipo]
+* **Proyecto:** TELSAL | Google Cloud Tech Pre-Training
