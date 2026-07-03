@@ -1,6 +1,6 @@
 # Travel Europe LLC - Web Infrastructure Deployment
 
-<img width="569" height="211" alt="google_cloud_run" src="https://github.com/user-attachments/assets/bb30c358-277e-4a76-8211-b9097ce27e33" />
+<img width="569" height="311" alt="google_cloud_run" src="https://github.com/user-attachments/assets/bb30c358-277e-4a76-8211-b9097ce27e33" />
 
 For the cloud run app deployment we started by creaing our artifact registry standard repository using Google CloudUI and naming it "grupo2"
 to start pushing images into it we need to authenticate docker with our current gcloud credentials.
